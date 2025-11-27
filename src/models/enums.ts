@@ -8,6 +8,7 @@ export enum StandardSettings {
   FavoriteColors = 'favoriteColors',
   KeepBadgeColor = 'keepBadgeColor',
   KeepForegroundColor = 'keepForegroundColor',
+  KeepSurpriseMeInGlobalStorage = 'keepSurpriseMeInGlobalStorage',
   LightForegroundColor = 'lightForegroundColor',
   RemoteColor = 'remoteColor',
   ShowColorInStatusBar = 'showColorInStatusBar',

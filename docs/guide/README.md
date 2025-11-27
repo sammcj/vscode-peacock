@@ -75,6 +75,7 @@ Commands can be found in the command palette. Look for commands beginning with "
 | peacock.favoriteColors              | array of objects for color names and hex values                                                                     |
 | peacock.keepForegroundColor         | Specifies whether Peacock should change affect colors                                                               |
 | peacock.surpriseMeOnStartup         | Specifies whether Peacock apply a random color on startup                                                           |
+| peacock.keepSurpriseMeInGlobalStorage | When enabled with Surprise Me on Startup, stores the surprise color in global user settings instead of workspace settings. This prevents creating .vscode/settings.json files in every workspace |
 | peacock.darkForeground              | override for the dark foreground                                                                                    |
 | peacock.lightForeground             | override for the light foreground                                                                                   |
 | peacock.darkenLightenPercentage     | the percentage to darken or lighten the color                                                                       |

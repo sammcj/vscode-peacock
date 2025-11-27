@@ -367,6 +367,11 @@
           "default": false,
           "description": "Specifies that Peacock should surprise you at the start of every editing session, only when a color isn't already set. "
         },
+        "peacock.keepSurpriseMeInGlobalStorage": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled with Surprise Me on Startup, stores the surprise color in global user settings instead of workspace settings. This prevents creating .vscode/settings.json files in every workspace, but means all workspaces will share the same surprise color."
+        },
         "peacock.vslsJoinColor": {
           "type": "string",
           "default": "",

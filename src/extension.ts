@@ -26,13 +26,23 @@ import {
 import {
   checkIfPeacockSettingsChanged,
   getSurpriseMeOnStartup,
+  getKeepSurpriseMeInGlobalStorage,
+  getSurpriseMeFromFavoritesOnly,
+  getRandomFavoriteColor,
   writeRecommendedFavoriteColors,
   getEnvironmentAwareColor,
   inspectColor,
   getCurrentColorBeforeAdjustments,
   getFavoriteColors,
+  prepareColors,
+  updateGlobalColorCustomizations,
+  updatePeacockColorInUserSettings,
+  updatePeacockRemoteColorInUserSettings,
+  getPeacockColor,
+  getPeacockRemoteColor,
 } from './configuration';
 import { applyColor, updateColorSetting } from './apply-color';
+import { getRandomColorHex, getBackgroundColorHex } from './color-library';
 import { Logger } from './logging';
 import { addLiveShareIntegration } from './live-share';
 import { addRemoteIntegration } from './remote';
@@ -139,8 +149,55 @@ export async function checkSurpriseMeOnStartupLogic() {
    * as this would confuse users who choose a specific color in a
    * workspace and see it changed to the "surprise" color
    */
-  const peacockColor = getEnvironmentAwareColor();
-  if (getSurpriseMeOnStartup()) {
+  if (!getSurpriseMeOnStartup()) {
+    return;
+  }
+
+  const keepInGlobalStorage = getKeepSurpriseMeInGlobalStorage();
+
+  if (keepInGlobalStorage) {
+    // Check if any color is already set (respects both workspace-specific and global colors)
+    const existingColor = vscode.env.remoteName ? getPeacockRemoteColor() : getPeacockColor();
+    if (existingColor) {
+      const message = `Peacock did not change the color using "surprise me on startup" because the color ${existingColor} was already set.`;
+      Logger.info(message);
+      return;
+    }
+
+    // Generate random color
+    const surpriseMeFromFavoritesOnly = getSurpriseMeFromFavoritesOnly();
+    let color = '';
+
+    if (surpriseMeFromFavoritesOnly) {
+      const favoriteColor = getRandomFavoriteColor();
+      if (!favoriteColor) {
+        Logger.info(
+          'Peacock: No favorites exist. Add favorites to use surprise me from favorites feature.',
+        );
+        return;
+      }
+      color = favoriteColor.value;
+    } else {
+      color = getRandomColorHex();
+    }
+
+    // Apply color customizations to global settings
+    const backgroundColorHex = getBackgroundColorHex(color);
+    const colorCustomizations = prepareColors(backgroundColorHex);
+    await updateGlobalColorCustomizations(colorCustomizations);
+
+    // Store peacock color in global settings
+    if (vscode.env.remoteName) {
+      await updatePeacockRemoteColorInUserSettings(color);
+    } else {
+      await updatePeacockColorInUserSettings(color);
+    }
+
+    const message = `Peacock changed the global color to ${color}, because ${StandardSettings.SurpriseMeOnStartup} and ${StandardSettings.KeepSurpriseMeInGlobalStorage} are enabled.`;
+    Logger.info(message);
+  } else {
+    // Original behaviour: apply to workspace
+    const peacockColor = getEnvironmentAwareColor();
     if (peacockColor) {
       const message = `Peacock did not change the color using "surprise me on startup" because the color ${peacockColor} was already set.`;
       Logger.info(message);

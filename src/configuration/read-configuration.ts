@@ -232,6 +232,10 @@ export function getSurpriseMeOnStartup() {
   return readConfiguration<boolean>(StandardSettings.SurpriseMeOnStartup, false);
 }
 
+export function getKeepSurpriseMeInGlobalStorage() {
+  return readConfiguration<boolean>(StandardSettings.KeepSurpriseMeInGlobalStorage, false);
+}
+
 export function getAffectedElements() {
   return {
     activityBar: readConfiguration<boolean>(AffectedSettings.ActivityBar) || false,

@@ -58,6 +58,24 @@ export async function updateWorkspaceConfiguration(colorCustomizations: {} | und
     );
 }
 
+export async function updateGlobalColorCustomizations(colorCustomizations: {} | undefined) {
+  if (isObjectEmpty(colorCustomizations)) {
+    colorCustomizations = undefined;
+  }
+
+  Logger.info(
+    `${extensionShortName}: Updating global settings with the following color customizations`,
+  );
+  Logger.info(colorCustomizations, true);
+  return await vscode.workspace
+    .getConfiguration()
+    .update(
+      Sections.peacockColorCustomizationSection,
+      colorCustomizations,
+      ConfigurationTarget.Global,
+    );
+}
+
 export async function updateElementAdjustments(adjustments: IPeacockElementAdjustments) {
   return await updateGlobalConfiguration(StandardSettings.ElementAdjustments, adjustments);
 }
